@@ -2,6 +2,7 @@
 You need to change the Add() class below.
 """
 
+
 class Node(object):
     def __init__(self, inbound_nodes=[]):
         # Nodes from which this Node receives values
@@ -46,16 +47,27 @@ class Input(Node):
 
 
 class Add(Node):
-    def __init__(self, x, y):
-        # You could access `x` and `y` in forward with
-        # self.inbound_nodes[0] (`x`) and self.inbound_nodes[1] (`y`)
-        Node.__init__(self, [x, y])
+    # You may need to change this...
+    def __init__(self, *inputs):
+        Node.__init__(self, inputs)
 
     def forward(self):
         """
         Set the value of this node (`self.value`) to the sum of it's inbound_nodes.
         """
         self.value = sum(node.value for node in self.inbound_nodes)
+
+
+class Mul(Node):
+    # You may need to change this...
+    def __init__(self, *inputs):
+        Node.__init__(self, inputs)
+
+    def forward(self):
+        from functools import reduce  # Valid in Python 2.6+, required in Python 3
+        import operator
+
+        self.value = reduce(operator.mul, [node.value for node in self.inbound_nodes], 1)
 
 
 """
