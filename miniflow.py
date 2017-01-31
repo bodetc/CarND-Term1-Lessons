@@ -70,17 +70,15 @@ class Mul(Node):
 class Linear(Node):
     def __init__(self, inputs, weights, bias):
         Node.__init__(self, [inputs, weights, bias])
-        self.inputs = inputs
-        self.weights = weights
-        self.bias = bias
-        # NOTE: The weights and bias properties here are not
-        # numbers, but rather references to other nodes.
-        # The weight and bias values are stored within the
-        # respective nodes.
 
     def forward(self):
-        self.value = self.bias.value + sum(
-            input * weight for input, weight in zip(self.inputs.value, self.weights.value))
+        """
+        Set self.value to the value of the linear function output.
+        """
+        inputs = self.inbound_nodes[0].value
+        weights = self.inbound_nodes[1].value
+        bias = self.inbound_nodes[2]
+        self.value = bias.value + sum(x * w for x, w in zip(inputs, weights))
 
 
 """
