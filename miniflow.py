@@ -1,7 +1,4 @@
-"""
-You need to change the Add() class below.
-"""
-
+# Running implementation of the MiniFlow library
 
 class Node(object):
     def __init__(self, inbound_nodes=[]):
@@ -68,6 +65,22 @@ class Mul(Node):
         import operator
 
         self.value = reduce(operator.mul, [node.value for node in self.inbound_nodes], 1)
+
+
+class Linear(Node):
+    def __init__(self, inputs, weights, bias):
+        Node.__init__(self, [inputs, weights, bias])
+        self.inputs = inputs
+        self.weights = weights
+        self.bias = bias
+        # NOTE: The weights and bias properties here are not
+        # numbers, but rather references to other nodes.
+        # The weight and bias values are stored within the
+        # respective nodes.
+
+    def forward(self):
+        self.value = self.bias.value + sum(
+            input * weight for input, weight in zip(self.inputs.value, self.weights.value))
 
 
 """
