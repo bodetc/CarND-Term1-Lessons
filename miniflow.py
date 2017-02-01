@@ -1,4 +1,11 @@
-# Running implementation of the MiniFlow library
+"""
+Modify Linear#forward so that it linearly transforms
+input matrices, weights matrices and a bias vector to
+an output.
+"""
+
+import numpy as np
+
 
 class Node(object):
     def __init__(self, inbound_nodes=[]):
@@ -24,23 +31,22 @@ class Node(object):
 
 
 class Input(Node):
+    """
+    While it may be strange to consider an input a node when
+    an input is only an individual node in a node, for the sake
+    of simpler code we'll still use Node as the base class.
+
+    Think of Input as collating many individual input nodes into
+    a Node.
+    """
     def __init__(self):
-        # an Input node has no inbound nodes,
+        # An Input node has no inbound nodes,
         # so no need to pass anything to the Node instantiator
         Node.__init__(self)
 
-    # NOTE: Input node is the only node that may
-    # receive its value as an argument to forward().
-    #
-    # All other node implementations should calculate their
-    # values from the value of previous nodes, using
-    # self.inbound_nodes
-    #
-    # Example:
-    # val0 = self.inbound_nodes[0].value
     def forward(self, value=None):
-        if value is not None:
-            self.value = value
+        # Do nothing because nothing is calculated.
+        pass
 
 
 class Add(Node):
@@ -68,29 +74,26 @@ class Mul(Node):
 
 
 class Linear(Node):
-    def __init__(self, inputs, weights, bias):
-        Node.__init__(self, [inputs, weights, bias])
+    def __init__(self, X, W, b):
+        # Notice the ordering of the input nodes passed to the
+        # Node constructor.
+        Node.__init__(self, [X, W, b])
 
     def forward(self):
         """
         Set self.value to the value of the linear function output.
         """
-        inputs = self.inbound_nodes[0].value
-        weights = self.inbound_nodes[1].value
-        bias = self.inbound_nodes[2]
-        self.value = bias.value + sum(x * w for x, w in zip(inputs, weights))
-
-
-"""
-No need to change anything below here!
-"""
+        X = self.inbound_nodes[0].value
+        W = self.inbound_nodes[1].value
+        b = self.inbound_nodes[2].value
+        self.value = np.dot(X, W) + b
 
 
 def topological_sort(feed_dict):
     """
-    Sort generic nodes in topological order using Kahn's Algorithm.
+    Sort the nodes in topological order using Kahn's Algorithm.
 
-    `feed_dict`: A dictionary where the key is a `Input` node and the value is the respective value feed to that node.
+    `feed_dict`: A dictionary where the key is a `Input` Node and the value is the respective value feed to that Node.
 
     Returns a list of sorted nodes.
     """
@@ -130,14 +133,14 @@ def topological_sort(feed_dict):
 
 def forward_pass(output_node, sorted_nodes):
     """
-    Performs a forward pass through a list of sorted nodes.
+    Performs a forward pass through a list of sorted Nodes.
 
     Arguments:
 
-        `output_node`: A node in the graph, should be the output node (have no outgoing edges).
-        `sorted_nodes`: A topologically sorted list of nodes.
+        `output_node`: A Node in the graph, should be the output node (have no outgoing edges).
+        `sorted_nodes`: a topologically sorted list of nodes.
 
-    Returns the output Node's value
+    Returns the output node's value
     """
 
     for n in sorted_nodes:
