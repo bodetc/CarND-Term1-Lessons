@@ -39,6 +39,7 @@ class Input(Node):
     Think of Input as collating many individual input nodes into
     a Node.
     """
+
     def __init__(self):
         # An Input node has no inbound nodes,
         # so no need to pass anything to the Node instantiator
@@ -87,6 +88,31 @@ class Linear(Node):
         W = self.inbound_nodes[1].value
         b = self.inbound_nodes[2].value
         self.value = np.dot(X, W) + b
+
+
+class Sigmoid(Node):
+    def __init__(self, node):
+        Node.__init__(self, [node])
+
+    def _sigmoid(self, x):
+        """
+        This method is separate from `forward` because it
+        will be used later with `backward` as well.
+
+        `x`: A numpy array-like object.
+
+        Return the result of the sigmoid function.
+        """
+        return 1. / (1. + np.exp(-x))
+
+    def forward(self):
+        """
+        Set the value of this node to the result of the
+        sigmoid function, `_sigmoid`.
+        """
+        # This is a dummy value to prevent numpy errors
+        # if you test without changing this method.
+        self.value = self._sigmoid(self.inbound_nodes[0].value)
 
 
 def topological_sort(feed_dict):
