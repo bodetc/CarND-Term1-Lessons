@@ -9,9 +9,9 @@ to test your network, play around with the epochs, batch size, etc!
 """
 
 import numpy as np
-from sklearn.datasets import load_boston
-from sklearn.utils import shuffle, resample
 from miniflow import *
+from sklearn.datasets import load_boston
+from sklearn.utils import resample
 
 # Load data
 data = load_boston()
