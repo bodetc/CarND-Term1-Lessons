@@ -167,13 +167,9 @@ class Sigmoid(Node):
         for n in self.outbound_nodes:
             # Get the partial of the cost with respect to this node.
             grad_cost = n.gradients[self]
-            """
-            TODO: Your code goes here!
-
-            Set the gradients property to the gradients with respect to each input.
-
-            NOTE: See the Linear node and MSE node for examples.
-            """
+            x = self.inbound_nodes[0].value
+            sig = self._sigmoid(x)
+            self.gradients[self.inbound_nodes[0]] += grad_cost * sig * (1. - sig)
 
 
 class MSE(Node):
@@ -185,6 +181,7 @@ class MSE(Node):
         # Call the base class' constructor.
         Node.__init__(self, [y, a])
         self.m = 0
+        self.diff = 0
 
     def forward(self):
         """
@@ -201,9 +198,10 @@ class MSE(Node):
         # an elementwise subtraction as expected.
         y = self.inbound_nodes[0].value.reshape(-1, 1)
         a = self.inbound_nodes[1].value.reshape(-1, 1)
+        self.diff = y - a
         self.m = self.inbound_nodes[0].value.shape[0]
 
-        self.value = np.mean(np.square(y - a))
+        self.value = np.mean(np.square(self.diff))
 
     def backward(self):
         """
