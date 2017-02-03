@@ -90,3 +90,5 @@ ENV/
 
 # PyCharm files
 .idea/
+.DS_Store
+datasets/ud730/mnist/*.gz
