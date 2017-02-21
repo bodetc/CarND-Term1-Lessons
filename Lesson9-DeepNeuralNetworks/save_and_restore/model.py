@@ -5,7 +5,7 @@
 import tensorflow as tf
 
 # The file path to save the data
-save_file = 'model.ckpt'
+save_file = './model.ckpt'
 
 # Two Tensor Variables: weights and bias
 weights = tf.Variable(tf.truncated_normal([2, 3]))
@@ -94,7 +94,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
 import math
 
-save_file = 'train_model.ckpt'
+save_file = './train_model.ckpt'
 batch_size = 128
 n_epochs = 100
 
