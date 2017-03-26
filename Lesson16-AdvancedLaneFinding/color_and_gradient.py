@@ -4,7 +4,7 @@ import numpy as np
 import cv2
 
 # Read in an image, you can also try test1.jpg or test4.jpg
-img = mpimg.imread('signs_vehicles_xygrad.png')
+image = mpimg.imread('signs_vehicles_xygrad.png')
 
 
 # Edit this function to create your own pipeline.
@@ -26,18 +26,24 @@ def pipeline(img, s_thresh=(170, 255), sx_thresh=(20, 100)):
     # Threshold color channel
     s_binary = np.zeros_like(s_channel)
     s_binary[(s_channel >= s_thresh[0]) & (s_channel <= s_thresh[1])] = 1
-    # Stack each channel
-    # Note color_binary[:, :, 0] is all 0s, effectively an all black image. It might
-    # be beneficial to replace this channel with something else.
-    color_binary = np.dstack((np.zeros_like(sxbinary), sxbinary, s_binary))
-    return color_binary
 
-# Plotting thresholded images
-f, (ax1, ax2) = plt.subplots(1, 2, figsize=(20,10))
-ax1.set_title('Stacked thresholds')
-ax1.imshow(color_binary)
+    # Combine the two binary thresholds
+    combined_binary = np.zeros_like(sxbinary)
+    combined_binary[(s_binary == 1) | (sxbinary == 1)] = 1
+    return combined_binary
 
-ax2.set_title('Combined S channel and gradient thresholds')
-ax2.imshow(combined_binary, cmap='gray')
+
+result = pipeline(image)
+
+# Plot the result
+f, (ax1, ax2) = plt.subplots(1, 2, figsize=(24, 9))
+f.tight_layout()
+
+ax1.imshow(image)
+ax1.set_title('Original Image', fontsize=40)
+
+ax2.imshow(result)
+ax2.set_title('Pipeline Result', fontsize=40)
+plt.subplots_adjust(left=0., right=1, top=0.9, bottom=0.)
 
 plt.show()
